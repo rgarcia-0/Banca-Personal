@@ -1,5 +1,5 @@
 [build]
-  publish = "."
+  publish = "public"
 
 [build.environment]
   NODE_VERSION = "20"
@@ -8,16 +8,3 @@
   directory = "netlify/functions"
   node_bundler = "esbuild"
   external_node_modules = ["firebase-admin"]
-
-# Que el código de las funciones no se pueda abrir como archivo público.
-[[redirects]]
-  from = "/netlify/*"
-  to = "/404.html"
-  status = 404
-  force = true
-
-[[redirects]]
-  from = "/node_modules/*"
-  to = "/404.html"
-  status = 404
-  force = true

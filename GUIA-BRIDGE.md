@@ -10,8 +10,8 @@ Bridge no avisa cuando hay un consumo. Una función tuya le pregunta cada 15
 minutos si hay algo nuevo y lo deja en la bandeja que tu app ya escucha.
 Los consumos llegan con unos minutos de retraso, no al instante.
 
-Tus llaves de Bridge viven **solo** en Netlify. Nunca van en `index.html`
-ni en `config.js`, y nunca las pegues en un chat.
+Tus llaves de Bridge viven **solo** en Netlify. Nunca van en `public/index.html`
+ni en `public/config.js`, y nunca las pegues en un chat.
 
 ## Qué hay en esta carpeta
 
@@ -21,8 +21,9 @@ ni en `config.js`, y nunca las pegues en un chat.
 | `netlify/functions/sync-manual.mjs` | Para probar a mano desde el navegador |
 | `netlify/lib/sync.mjs` | La lógica compartida |
 | `netlify.toml`, `package.json` | Configuración de Netlify |
-| `conectar.html` | Página de un solo uso para conectar los bancos |
-| `index.html` | Tu app, con un solo texto cambiado |
+| `public/` | Lo único que se publica en la web (la app, iconos, etc.) |
+| `public/conectar.html` | Página de un solo uso para conectar los bancos |
+| `public/index.html` | Tu app, con un solo texto cambiado |
 
 Copia todo esto encima de tu carpeta actual y **borra `ingest.js`**: ya no se usa.
 
