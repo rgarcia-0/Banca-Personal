@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Conectar bancos</title>
+<style>
+body{font:16px system-ui,sans-serif;max-width:520px;margin:40px auto;padding:0 20px;color:#1d2a3a}
+button{background:#1f3b5c;color:#fff;border:0;border-radius:12px;padding:14px 20px;font-size:16px;width:100%}
+textarea{width:100%;height:110px;margin-top:8px;font:13px monospace}
+.aviso{background:#fff4d6;border-radius:12px;padding:12px;margin:16px 0;font-size:14px}
+</style></head><body>
+<h2>Conectar bancos</h2>
+<p>Página de uso único. Conecta Qik y Banco Popular y copia el token que aparece. <b>Bórrala del sitio cuando termines.</b></p>
+<button id="c">Conectar un banco</button>
+<div id="r"></div>
+<script src="https://static.bridge.com.do/connect/bridge-connect.js"></script>
+<script>
+var APP_ID = "PEGA_AQUI_TU_APP_ID";   // dash.bridge.com.do > Aplicación
+var USUARIO = "yo";                   // no lo cambies entre conexiones
+var b = BridgeConnect.init({
+  applicationId: APP_ID, externalUserId: USUARIO,
+  onSuccess: function (d) {
+    var h = "<p>Listo: <b>" + (d.institution && d.institution.name) + "</b> (" + d.connectionId + ")</p>";
+    if (d.scopedToken) {
+      h += "<div class='aviso'>Este token <b>solo se muestra ahora</b>. Cópialo y guárdalo ya en Netlify como BRIDGE_SCOPED_TOKEN.</div><textarea readonly onclick='this.select()'>" + d.scopedToken + "</textarea>";
+    } else {
+      h += "<p>Conexión adicional: usa el mismo token de la primera vez.</p>";
+    }
+    document.getElementById("r").innerHTML = h;
+  }
+});
+document.getElementById("c").onclick = function () { b.open(); };
+</script></body></html>
