@@ -26,3 +26,7 @@ export const firebaseConfig = {
 export const ajustes = {
   tasaUSD: 63.00
 };
+
+/* Clave pública para las notificaciones push (Firebase › Cloud Messaging).
+   Es pública, no es secreta. */
+export const vapidKey = "BNLb2F2NgmuEbd5mbMTtxUvLhP1Od-A_STU-MDEFzSdiLRTTBi5gZ8AizVm841850VcLy9KZ3NhqPxuHj50pTg8";
