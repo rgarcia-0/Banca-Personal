@@ -506,6 +506,7 @@ function render(){
     if(b.dataset.v===view) b.setAttribute('aria-current','page'); else b.removeAttribute('aria-current');
   });
   window.scrollTo(0,y);
+  window.__mb={S,view,fa,fs,F,UID,cfg,toast,modoLocal}; window.dispatchEvent(new Event('mb:render'));
 }
 function header(){
   const h=new Date().getHours();
@@ -943,6 +944,7 @@ function sheetEditar(){
         ${t.tipo==='doble'?n('Límite (US$)','t'+i+'_limiteUSD',t.limiteUSD,'10')+n('Balance usado (US$)','t'+i+'_usadoUSD',t.usadoUSD):''}
         ${n('Pago mínimo (RD$)','t'+i+'_pagoMinimo',t.pagoMinimo)}
         ${n('Día de corte','t'+i+'_corte',t.corte,'1')}`).join('')}
+        ${n('Día de pago (opcional)','t'+i+'_diaPago',t.diaPago||'','1')}
       ${S.prestamos.map((p,i)=>`
         <p class="daylbl">Préstamo ${i+1}</p>
         <div class="field"><label>Nombre</label><input type="text" name="p${i}_nombre" value="${esc(p.nombre)}"></div>
@@ -966,6 +968,7 @@ async function guardarEdicion(fd){
     t.limite=num(fd.get('t'+i+'_limite')); t.usado=num(fd.get('t'+i+'_usado'));
     t.pagoMinimo=num(fd.get('t'+i+'_pagoMinimo'));
     t.corte=Math.min(31,Math.max(1,num(fd.get('t'+i+'_corte'))||1));
+    t.diaPago=Math.min(31,Math.max(0,num(fd.get('t'+i+'_diaPago'))))||0;
     if(t.tipo==='doble'){ t.limiteUSD=num(fd.get('t'+i+'_limiteUSD')); t.usadoUSD=num(fd.get('t'+i+'_usadoUSD')); }
   });
   S.prestamos.forEach((p,i)=>{
@@ -1067,5 +1070,7 @@ if('serviceWorker' in navigator){
   window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(e=>console.warn('sw',e)));
 }
 </script>
+<script type="module" src="./i18n-en.js"></script>
+<script type="module" src="./extras.js"></script>
 </body>
 </html>
