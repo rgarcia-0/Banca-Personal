@@ -325,7 +325,6 @@ function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('on'); 
 function defaults(){ return {
   v:3,
   perfil:{ nombre:'Tu nombre' },
-  debito:{ nombre:'Cuenta de Débito', numero:'1290', saldo:15200 },
   ahorro:{ nombre:'Cuenta de Ahorros', numero:'7842', saldo:48250.75 },
   tarjetas:[
     { id:'tc1', nombre:'Visa Clásica',     red:'VISA',       numero:'4821', tipo:'normal', limite:45000, usado:12350.40, corte:25, pagoMinimo:1250 },
@@ -531,7 +530,7 @@ function avisos(){
   return a;
 }
 function vInicio(){
-  const total=S.debito.saldo+S.ahorro.saldo, d=new Date(), mk=monthKey(d), g=gastosMes(mk);
+  const total=S.ahorro.saldo, d=new Date(), mk=monthKey(d), g=gastosMes(mk);
   const tot=g.reduce((s,m)=>s+aDOP(m),0);
   const p=new Date(d.getFullYear(),d.getMonth()-1,1), prev=gastosMes(monthKey(p)).reduce((s,m)=>s+aDOP(m),0);
   const cats={}; g.forEach(m=>cats[m.categoria]=(cats[m.categoria]||0)+aDOP(m));
@@ -545,7 +544,6 @@ function vInicio(){
       <button class="eye" data-act="ojo" aria-label="Mostrar u ocultar saldos">${svg(S.config.ocultar?'eyeoff':'eye')}</button></div>
     <div class="hero-bal"><span class="cur">RD$</span><span class="val num">${hide(nf(total))}</span></div>
     <div class="accts">
-      <div><p class="k">Débito ••${esc(S.debito.numero)}</p><p class="v num">${hide(nf(S.debito.saldo))}</p></div>
       <div><p class="k">Ahorros ••${esc(S.ahorro.numero)}</p><p class="v num">${hide(nf(S.ahorro.saldo))}</p></div>
     </div>
     <div class="hero-acts">
@@ -752,7 +750,7 @@ function sheetOp(op,pre){
       <div class="field" id="curwrap" style="${doble?'':'display:none'}"><label for="cur">Moneda</label>
         <select id="cur" name="moneda"><option value="DOP">Pesos (RD$)</option><option value="USD">Dólares (US$)</option></select></div>
       <p class="note" id="tasanota" style="${doble?'':'display:none'}">En dólares se usa la tasa de RD$ ${nf(TASA)} por US$1. La cambias en config.js.</p>
-      ${op!=='compra'?`<div class="field"><label for="ac">Cuenta</label><select id="ac" name="cuenta"><option value="debito">Débito ••${esc(S.debito.numero)}</option><option value="ahorro">Ahorros ••${esc(S.ahorro.numero)}</option></select></div>`:''}
+      ${op!=='compra'?`<div class="field"><label for="ac">Cuenta</label><select id="ac" name="cuenta"><option value="ahorro">Ahorros ••${esc(S.ahorro.numero)}</option></select></div>`:''}
       <div class="field"><label for="c">Concepto</label>
         <input id="c" name="concepto" type="text" maxlength="48" placeholder="${op==='compra'?'Ej. Supermercado Nacional':'Ej. Pago de nómina'}"></div>
       <div class="field"><label for="cat">Categoría</label>
@@ -780,7 +778,7 @@ async function ejecutar(fd){
   const moneda=fd.get('moneda')||'DOP';
   const cat=fd.get('categoria')||'Otro';
   const concepto=(fd.get('concepto')||'').trim();
-  const AC=fd.get('cuenta')==='debito'?S.debito:AC, CK=AC===S.debito?'debito':'ahorro';
+  const AC=S.ahorro, CK='ahorro';
   if(!(monto>0)){ err.textContent='Escribe un monto mayor que cero.'; return; }
 
   if(op==='ingreso'){
