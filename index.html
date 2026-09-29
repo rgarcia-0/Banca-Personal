@@ -869,14 +869,55 @@ function sheetNuevoPrestamo(){
 }
 const REGLAS=[[/nacional|jumbo|bravo|pola|super|colmado|sirena/i,'Supermercado'],[/kfc|mcdonald|pizza|burger|restaur|cafe|pollo|domino/i,'Restaurante'],[/shell|texaco|sunix|esso|gasolin|combust/i,'Combustible'],[/uber|indrive|taxi|peaje/i,'Transporte'],[/farmac|clinic|hospital|salud|labor/i,'Salud'],[/edesur|edeeste|claro|altice|wind|internet|caasd/i,'Servicios'],[/netflix|spotify|hbo|disney|cine|steam|apple|google/i,'Entretenimiento'],[/amazon|zara|ikea|tienda|shop|plaza|mercado/i,'Compras']];
 const adivinar=n=>{ const r=REGLAS.find(x=>x[0].test(n||'')); return r?r[1]:'Otro'; };
+// Un "Pago a tarjeta" que sale del ahorro/débito también tiene que bajar la deuda de la tarjeta.
+const ES_PAGO_TC=/pago.{0,20}(tarjeta|t\/?c\b|visa|master|amex|cr[eé]dito)|\bpago\s*tc\b|abono.{0,20}tarjeta/i;
+function tarjetaDelPago(txt){
+  const d=String(txt||'');
+  const por4=S.tarjetas.filter(t=>t.numero&&d.includes(String(t.numero)));
+  if(por4.length===1) return por4[0];
+  const porRed=S.tarjetas.filter(t=>{ const r=(t.red||'').slice(0,4); return r&&new RegExp(r,'i').test(d); });
+  if(porRed.length===1) return porRed[0];
+  const conDeuda=S.tarjetas.filter(t=>(t.usado||0)>0||(t.usadoUSD||0)>0);
+  if(conDeuda.length===1) return conDeuda[0];
+  return S.tarjetas.length===1?S.tarjetas[0]:null;
+}
+// El mismo pago puede llegar dos veces (retiro del ahorro y abono en la tarjeta). Se guarda el
+// primero y cuando llega el otro lado no se vuelve a descontar de la tarjeta.
+function emparejarPago(lado,t,monto,fecha){
+  const hoy=Date.parse(todayISO());
+  S.pagosTC=(S.pagosTC||[]).filter(x=>hoy-Date.parse(x.fecha)<15*864e5);
+  const f=Date.parse(fecha);
+  const i=S.pagosTC.findIndex(x=>x.lado!==lado&&x.tarjeta===t.id&&Math.abs(x.monto-monto)<0.01&&Math.abs(Date.parse(x.fecha)-f)<=10*864e5);
+  if(i>=0){ S.pagosTC.splice(i,1); return true; }
+  S.pagosTC.push({lado,tarjeta:t.id,monto:Math.round(monto*100)/100,fecha});
+  return false;
+}
+function bajarDeuda(t,m,dual){
+  if(dual) t.usadoUSD=Math.max(0,(t.usadoUSD||0)-m); else t.usado=Math.max(0,(t.usado||0)-m);
+}
 async function aplicarTx(tx,docId){
   if(!allMovs().some(m=>m.id===tx.id)){
     const usd=tx.moneda==='USD', t=S.tarjetas.find(x=>x.numero===String(tx.ultimos4));
     const dual=usd&&t&&t.tipo==='doble', m=dual?tx.monto:tx.monto*(usd?TASA:1);
     const c=S.debito.numero===String(tx.ultimos4)?S.debito:S.ahorro;
-    if(t){ if(dual) t.usadoUSD=Math.max(0,(t.usadoUSD||0)-m); else t.usado=Math.max(0,(t.usado||0)-m); } else c.saldo+=m;
-    await addMov({id:tx.id,concepto:tx.comercio||'Consumo',categoria:tx.categoria||adivinar(tx.comercio),monto:m,moneda:dual?'USD':'DOP',
-      cuentaNombre:t?t.nombre+' ·'+t.numero:c.nombre,fecha:tx.fecha||todayISO(),cuenta:t?t.id:(c===S.debito?'debito':'ahorro'),origen:'auto'});
+    const fecha=tx.fecha||todayISO();
+    let categoria=tx.categoria||adivinar(tx.comercio), concepto=tx.comercio||'Consumo';
+    if(t){
+      // Abono en la tarjeta: si ya se descontó con el retiro del ahorro, no repetir.
+      const yaAplicado = m>0 && emparejarPago('tarjeta',t,Math.abs(tx.monto),fecha);
+      if(m>0) categoria='Pago';
+      if(!yaAplicado) bajarDeuda(t,m,dual);
+    } else {
+      c.saldo+=m;
+      const tc = m<0 && ES_PAGO_TC.test(concepto) ? tarjetaDelPago(concepto) : null;
+      if(m<0 && ES_PAGO_TC.test(concepto)) categoria='Pago';
+      if(tc){
+        concepto=concepto+' → '+tc.nombre+' ·'+tc.numero;
+        if(!emparejarPago('ahorro',tc,Math.abs(m),fecha)) bajarDeuda(tc,Math.abs(m),false);
+      }
+    }
+    await addMov({id:tx.id,concepto,categoria,monto:m,moneda:dual?'USD':'DOP',
+      cuentaNombre:t?t.nombre+' ·'+t.numero:c.nombre,fecha,cuenta:t?t.id:(c===S.debito?'debito':'ahorro'),origen:'auto'});
   }
   if(docId&&fs&&UID){ try{ await F.deleteDoc(F.doc(fs,'users',UID,'bandeja',docId)); }catch(e){} }
 }
