@@ -1,20 +1,20 @@
-/* ux-suave.css: paleta cálida (~2500K), 75% de opacidad, tipografía fina, fondo plano */
+/* ux-suave.css: azul original, tenue, 75% de opacidad, tipografía fina, fondo plano */
 :root[data-theme="light"],:root:not([data-theme]){
-  --bg:#f1e9dd; --surface:rgba(250,243,232,.75); --surface-2:rgba(232,220,203,.6); --line:rgba(120,95,65,.14);
-  --ink:#4a4033; --ink-2:#7d705f; --ink-3:#a39684;
-  --brand-2:#a9855a; --accent:#a9855a; --pos:#6f9a7f; --neg:#b9786c; --warn:#c79a5b;
-  --shadow:0 8px 24px rgba(90,65,35,.06);
+  --bg:#f3f5fb; --surface:rgba(255,255,255,.75); --surface-2:rgba(238,241,249,.7); --line:rgba(103,112,143,.16);
+  --ink:#2a3050; --ink-2:#727a98; --ink-3:#9ea5bd;
+  --brand-2:#7580d8; --accent:#7580d8; --pos:#4fa387; --neg:#c77a70; --warn:#cf9c55;
+  --shadow:0 8px 24px rgba(60,70,140,.05);
 }
 :root[data-theme="dark"]{
-  --bg:#1d1913; --surface:rgba(44,37,29,.75); --surface-2:rgba(64,54,42,.6); --line:rgba(230,200,160,.09);
-  --ink:#e3d8c6; --ink-2:#a8998a; --ink-3:#7c7062;
-  --brand-2:#c29a68; --accent:#d1a877; --pos:#8fb59a; --neg:#cf9084; --warn:#d6ac70;
+  --bg:#12142a; --surface:rgba(26,29,56,.75); --surface-2:rgba(35,39,70,.7); --line:rgba(160,170,230,.1);
+  --ink:#d3d8ee; --ink-2:#8f97bd; --ink-3:#6e7699;
+  --brand-2:#6a76cf; --accent:#8590e0; --pos:#69b399; --neg:#d08c82; --warn:#d2a865;
   --shadow:0 8px 24px rgba(0,0,0,.22);
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#1d1913; --surface:rgba(44,37,29,.75); --surface-2:rgba(64,54,42,.6); --line:rgba(230,200,160,.09);
-  --ink:#e3d8c6; --ink-2:#a8998a; --ink-3:#7c7062; --brand-2:#c29a68; --accent:#d1a877;
-  --pos:#8fb59a; --neg:#cf9084; --warn:#d6ac70;}}
+  --bg:#12142a; --surface:rgba(26,29,56,.75); --surface-2:rgba(35,39,70,.7); --line:rgba(160,170,230,.1);
+  --ink:#d3d8ee; --ink-2:#8f97bd; --ink-3:#6e7699; --brand-2:#6a76cf; --accent:#8590e0;
+  --pos:#69b399; --neg:#d08c82; --warn:#d2a865;}}
 body{font-weight:400}
 h1,h2,h3,.t,.big2,.hero-bal .val,.amt,.v,.big,.nm{font-weight:500!important}
 .hero-bal .cur,.cc-name,.sec-h h2,.loan h3{font-weight:400!important}
@@ -29,9 +29,10 @@ h1,h2,h3,.t,.big2,.hero-bal .val,.amt,.v,.big,.nm{font-weight:500!important}
 .hero-acts button:active{background:var(--surface-2)}
 .cc{background:var(--surface)!important;color:var(--ink);box-shadow:none;border:1px solid var(--line)}
 .cc .bar{background:var(--surface-2)}.cc .bar i{background:var(--accent)}
-.accts>div{background:transparent;border:1px solid var(--line)}
-#gate{background:var(--bg);color:var(--ink)}
-#toast{background:rgba(60,50,38,.9)}
+/* sin cajas detrás de los textos: todo plano sobre el fondo */
+.accts>div,.lgrid>div{background:none!important;border:0!important;border-radius:0;padding:0}
+.accts,.lgrid{gap:22px}
+.accts .k,.accts .v{opacity:1}
 
 /* barras por categoría */
 .cbars{display:grid;gap:14px;margin-top:16px}
