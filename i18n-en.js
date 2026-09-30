@@ -22,7 +22,7 @@ const T = {
 'Tarjetas de crédito':'Credit cards','Disponible':'Available','Disponible RD$':'Available RD$','Disponible US$':'Available US$',
 'Balance usado':'Balance used','Balance en dólares':'USD balance','Pago mínimo':'Minimum payment','Registrar compra':'Log purchase',
 'Descuenta del disponible':'Deducts from available credit','Pagar tarjeta':'Pay card','Desde tu cuenta de ahorros':'From your savings account',
-'Movimientos':'Transactions','Ingresos del mes':'Income this month','Gastos del mes':'Spending this month','Todos':'All','Ingresos':'Income','Gastos':'Spending',
+'Movimientos':'History','Ingresos del mes':'Income this month','Gastos del mes':'Spending this month','Todos':'All','Ingresos':'Income','Gastos':'Spending',
 'No hay movimientos con este filtro.':'No transactions match this filter.','Hoy':'Today','Ayer':'Yesterday',
 'Supermercado':'Groceries','Restaurante':'Restaurants','Combustible':'Fuel','Transporte':'Transport','Salud':'Health','Servicios':'Utilities',
 'Compras':'Shopping','Entretenimiento':'Entertainment','Cajero':'ATM','Transferencia':'Transfer','Depósito':'Deposit','Pago':'Payment','Otro':'Other',
