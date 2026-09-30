@@ -22,9 +22,9 @@ export const firebaseConfig = {
 };
 
 /* Moneda principal y tasa del dólar (para la tarjeta de doble saldo).
-   Cambia 63 por la tasa que quieras usar. */
+   Hoy: 1 US$ = RD$ 60.35. Cambia 60.35 por la tasa que quieras usar. */
 export const ajustes = {
-  tasaUSD: 63.00
+  tasaUSD: 60.35
 };
 
 /* Clave pública para las notificaciones push (Firebase › Cloud Messaging).
