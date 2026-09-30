@@ -1,4 +1,4 @@
-// Corre sola cada 15 minutos y trae los consumos nuevos de Bridge.
+// Corre sola cada 5 minutos y trae los consumos nuevos de Bridge.
 import { sincronizar } from '../lib/sync.mjs';
 
 export default async () => {
@@ -9,4 +9,4 @@ export default async () => {
   }
 };
 
-export const config = { schedule: '*/15 * * * *' };
+export const config = { schedule: '*/5 * * * *' };
