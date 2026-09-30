@@ -1,6 +1,6 @@
 /* Service worker: hace que la app abra sin internet y sea instalable. */
-const CACHE = 'mibanco-v1';
-const SHELL = ['./', './index.html', './config.js', './manifest.webmanifest',
+const CACHE = 'mibanco-v2';
+const SHELL = ['./', './index.html', './config.js', './ux-suave.css', './manifest.webmanifest',
                './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
