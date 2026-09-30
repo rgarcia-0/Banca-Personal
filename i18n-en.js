@@ -84,7 +84,6 @@ const R = [
 [/^(\d+)% del límite$/, (m,a)=>`${a}% of limit`],[/^Tarjeta (\d+)( · doble saldo)?$/, (m,a,b)=>`Card ${a}${b?' · dual currency':''}`],
 [/^Préstamo (\d+)$/, (m,a)=>`Loan ${a}`],
 [/^En dólares se usa la tasa de (RD\$ [\d.,]+) por US\$1\. La cambias en config\.js\.$/, (m,a)=>`Dollars use a rate of ${a} per US$1. Change it in config.js.`],
-[/^Supera el disponible de la tarjeta \((.+)\)\.$/, (m,a)=>`Exceeds the card's available credit (${a}).`],
 [/^El pago supera el balance de la tarjeta \((.+)\)\.$/, (m,a)=>`Payment exceeds the card balance (${a}).`],
 [/^Pago a (.+)$/, (m,a)=>`Payment to ${a}`],[/^Cuota de (.+)$/, (m,a)=>`Installment for ${a}`],
 [/^Compra con (tarjeta|débito)$/, (m,a)=>`${a==='tarjeta'?'Card':'Debit'} purchase`],
