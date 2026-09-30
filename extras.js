@@ -45,8 +45,6 @@ function alertas(S) {
   S.tarjetas.forEach(t => {
     ciclo(t, t.corte, 'cut');
     ciclo(t, t.diaPago, 'pay');
-    const p = t.limite ? (t.usado / t.limite) * 100 : 0;
-    if (p >= 80) out.push(['warn', `${t.nombre} is at ${Math.round(p)}% of its limit, close to the maximum`]);
   });
   S.prestamos.forEach(p => {
     if (p.dia) { const d = diasHasta(p.dia); if (d <= 2) out.push([d === 0 ? 'warn' : 'info', `${p.nombre} payment ${d === 0 ? 'today' : d === 1 ? 'tomorrow' : 'in 2 days'}`]); }
