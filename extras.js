@@ -134,3 +134,40 @@ window.addEventListener('mb:render', () => {
   pintarPush();
   if (primera) { primera = false; activarPush(true); }
 });
+
+/* ── detalle desplegable de movimientos ── */
+document.addEventListener('click', e => {
+  const r = e.target.closest('.row[data-mov]'); if (!r) return;
+  const mb = window.__mb; if (!mb || !mb.movs) return;
+  e.stopPropagation();
+  const nxt = r.nextElementSibling;
+  const abierto = nxt && nxt.classList.contains('det');
+  document.querySelectorAll('.det').forEach(d => { d.classList.remove('on'); setTimeout(() => d.remove(), 380); });
+  document.querySelectorAll('.row.abierto').forEach(x => x.classList.remove('abierto'));
+  if (abierto) return;
+  const m = mb.movs().find(x => String(x.id) === r.dataset.mov); if (!m) return;
+  const usd = m.moneda === 'USD', a = Math.abs(m.monto), f = n => n.toLocaleString('es-DO', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const dop = usd ? a * mb.TASA : a, dol = usd ? a : a / mb.TASA;
+  const fecha = new Date(m.fecha + 'T00:00:00').toLocaleDateString('es-DO', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  const filas = [['Date', fecha], ['Amount (RD$)', 'RD$ ' + f(dop)], ['Amount (US$)', 'US$ ' + f(dol)],
+    [m.monto < 0 ? 'Debited from' : 'Credited to', m.cuentaNombre || '—'], ['Category', m.categoria || '—'],
+    ['Type', m.origen === 'auto' ? 'Automatic (bank)' : 'Manual']];
+  const d = document.createElement('div'); d.className = 'det';
+  d.innerHTML = `<div><dl>${filas.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl></div>`;
+  r.classList.add('abierto'); r.after(d);
+  requestAnimationFrame(() => requestAnimationFrame(() => d.classList.add('on')));
+}, true);
+
+/* ── categorías: una barra por cada una, nombre y % encima ── */
+window.addEventListener('mb:render', () => {
+  const seg = document.querySelector('.seg'), leg = document.querySelector('.leg');
+  if (!seg || !leg || document.querySelector('.cbars')) return;
+  const items = [...leg.children].map((el, i) => ({
+    n: el.childNodes[1]?.nodeValue?.trim() || '', v: parseFloat(el.querySelector('b').textContent.replace(/,/g, '')) || 0,
+    c: el.querySelector('u').style.background }));
+  const tot = items.reduce((s, x) => s + x.v, 0) || 1;
+  seg.remove();
+  leg.outerHTML = `<div class="cbars">${items.map(x => { const p = Math.round(x.v / tot * 100);
+    return `<div><div class="h"><span>${esc(x.n)}</span><b>${p}%</b></div><div class="mini"><i style="width:${p}%;background:${x.c}"></i></div></div>`; }).join('')}</div>`;
+  animarBarras();
+});
