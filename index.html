@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Mi Banco">
-<meta name="theme-color" content="#f3f5fb">
+<meta name="theme-color" content="#f1e9dd">
 <title>Mi Banco</title>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./apple-touch-icon.png">
@@ -249,6 +249,7 @@ input:focus,select:focus{border-color:var(--accent);outline:none}
 .mini{height:5px;border-radius:99px;background:var(--surface-2);margin-top:7px;overflow:hidden;position:relative}
 .mini i{position:absolute;inset:0 auto 0 0;border-radius:99px;background:var(--accent)}
 </style>
+<link rel="stylesheet" href="./ux-suave.css">
 </head>
 <body>
 
@@ -506,7 +507,7 @@ function render(){
     if(b.dataset.v===view) b.setAttribute('aria-current','page'); else b.removeAttribute('aria-current');
   });
   window.scrollTo(0,y);
-  window.__mb={S,view,fa,fs,F,UID,cfg,toast,modoLocal}; window.dispatchEvent(new Event('mb:render'));
+  window.__mb={S,view,fa,fs,F,UID,cfg,toast,modoLocal,movs:allMovs,TASA}; window.dispatchEvent(new Event('mb:render'));
 }
 function header(){
   const h=new Date().getHours();
