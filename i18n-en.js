@@ -10,7 +10,7 @@ const T = {
 'Mínimo 6 caracteres':'At least 6 characters','tucorreo@ejemplo.com':'you@example.com',
 'Correo o contraseña incorrectos.':'Wrong email or password.','La contraseña necesita al menos 6 caracteres.':'Password needs at least 6 characters.',
 'Revisa el correo, parece mal escrito.':'Check the email, it looks misspelled.','Sin internet. Intenta de nuevo.':'No internet. Try again.',
-'Inicio':'Home','Tarjetas':'Cards','Préstamos':'Loans','Historial':'History','Más':'More',
+'Inicio':'Home','Tarjetas':'Cards','Préstamos':'Loans','Historial':'History','Transacciones':'Transactions','Más':'More',
 'Buenos días':'Good morning','Buenas tardes':'Good afternoon','Buenas noches':'Good evening',
 'Tu dinero disponible':'Your available money','Agregar':'Add','Enviar':'Send','Compra':'Purchase','Pagar':'Pay',
 'Detalle':'Details','Ver tarjetas':'View cards','Ver todos':'See all','Ver todo':'See all','Consumo en tarjetas':'Card spending',
