@@ -56,3 +56,12 @@ h1,h2,h3,.t,.big2,.hero-bal .val,.amt,.v,.big,.nm{font-weight:500!important}
 /* tablet y computadora */
 @media (min-width:700px){#app,.nav-in{max-width:680px}}
 @media (min-width:1000px){#app,.nav-in{max-width:860px}.rail{margin:0;padding-left:0;padding-right:0}.cc{flex:0 0 380px}}
+
+/* sin cuadros contenedores: todo va directo sobre el fondo */
+.hero,.card,.loan{background:none!important;border:0!important;box-shadow:none!important;
+  backdrop-filter:none;-webkit-backdrop-filter:none;border-radius:0}
+.hero{padding:4px 2px 8px}
+.card.pad{padding:4px 2px}
+.loan{padding:10px 2px}
+.row{padding-left:2px;padding-right:2px;border-bottom-color:var(--line)}
+.row:active{background:none}
