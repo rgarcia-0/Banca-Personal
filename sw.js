@@ -1,5 +1,5 @@
 /* Service worker: hace que la app abra sin internet y sea instalable. */
-const CACHE = 'mibanco-v4';
+const CACHE = 'mibanco-v5';
 const SHELL = ['./', './index.html', './config.js', './ux-suave.css', './manifest.webmanifest',
                './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 
@@ -27,6 +27,15 @@ self.addEventListener('fetch', e => {
       caches.open(CACHE).then(c => c.put('./index.html', r.clone()));
       return r;
     }).catch(() => caches.match('./index.html')));
+    return;
+  }
+
+  // Archivos propios (config, css, js): red primero, para que los cambios siempre lleguen.
+  if (url.origin === location.origin) {
+    e.respondWith(fetch(req).then(r => {
+      if (r.ok) { const copy = r.clone(); caches.open(CACHE).then(c => c.put(req, copy)); }
+      return r;
+    }).catch(() => caches.match(req)));
     return;
   }
 
