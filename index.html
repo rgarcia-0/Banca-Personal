@@ -179,8 +179,8 @@ input,select{font:inherit;color:inherit}
   backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-top:1px solid var(--line);
   padding-bottom:env(safe-area-inset-bottom,0px)}
 .nav[hidden]{display:none}
-.nav-in{max-width:520px;margin:0 auto;height:var(--nav-h);display:grid;grid-template-columns:repeat(5,1fr)}
-.nav button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:10px;font-weight:600;color:var(--ink-3)}
+.nav-in{max-width:520px;margin:0 auto;height:var(--nav-h);display:grid;grid-template-columns:repeat(6,1fr)}
+.nav button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:9.5px;letter-spacing:-.01em;white-space:nowrap;min-width:0;font-weight:600;color:var(--ink-3)}@media (max-width:370px){.nav button{font-size:8.5px}}
 .nav button svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
 .nav button[aria-current="page"]{color:var(--accent)}
 
@@ -276,6 +276,7 @@ input:focus,select:focus{border-color:var(--accent);outline:none}
 <nav class="nav" id="nav" hidden>
   <div class="nav-in">
     <button data-v="inicio" aria-current="page"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20h14V9.5"/><path d="M9.5 20v-6h5v6"/></svg>Inicio</button>
+    <button data-v="ops"><svg viewBox="0 0 24 24"><path d="M7 7h13"/><path d="m16 3 4 4-4 4"/><path d="M17 17H4"/><path d="m8 13-4 4 4 4"/></svg>Transacciones</button>
     <button data-v="tarjetas"><svg viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="3"/><path d="M2.5 10h19"/></svg>Tarjetas</button>
     <button data-v="prestamos"><svg viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12" rx="3"/><circle cx="12" cy="12" r="2.6"/></svg>Préstamos</button>
     <button data-v="movs"><svg viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M4 12h10"/><path d="M4 17h13"/><circle cx="18.5" cy="12" r="2.2"/></svg>Historial</button>
@@ -290,10 +291,10 @@ input:focus,select:focus{border-color:var(--accent);outline:none}
 <script type="module">
 /* ═══════════ CARGA DE FIREBASE (opcional) ═══════════ */
 const FB = "https://www.gstatic.com/firebasejs/12.19.0/";
-let cfg = { firebaseConfig:{}, ajustes:{ tasaUSD:63 } };
+let cfg = { firebaseConfig:{}, ajustes:{ tasaUSD:60.35 } };
 try { cfg = Object.assign(cfg, await import('./config.js')); } catch(e){ console.warn('config.js no cargó', e); }
 const configurado = !!(cfg.firebaseConfig && cfg.firebaseConfig.apiKey && !String(cfg.firebaseConfig.apiKey).startsWith('PEGA_AQUI'));
-const TASA = Number((cfg.ajustes && cfg.ajustes.tasaUSD) || 63);
+const TASA = Number((cfg.ajustes && cfg.ajustes.tasaUSD) || 60.35);
 
 let fa=null, auth=null, fs=null, F=null, A=null;
 if (configurado) {
@@ -499,10 +500,10 @@ const isDark  = () => { const t=document.documentElement.getAttribute('data-them
 /* ═══════════ RENDER ═══════════ */
 function render(){
   if(!ready||!S) return;
-  if(!S.debito) S.debito=defaults().debito;
+  if(!S.debito) S.debito={nombre:'Débito',numero:'0000',saldo:0};
   navEl.hidden=false;
   const y=window.scrollY;
-  app.innerHTML = header() + ({inicio:vInicio,tarjetas:vTarjetas,prestamos:vPrestamos,movs:vMovs,mas:vMas}[view])();
+  app.innerHTML = header() + ({inicio:vInicio,tarjetas:vTarjetas,prestamos:vPrestamos,movs:vMovs,ops:vOps,mas:vMas}[view])();
   document.querySelectorAll('.nav button').forEach(b=>{
     if(b.dataset.v===view) b.setAttribute('aria-current','page'); else b.removeAttribute('aria-current');
   });
@@ -527,7 +528,7 @@ const COLS=['#6f7bea','#2f9e7a','#d99a3d','#d0655a','#a58df0','#98a0bc'];
 const dLbl=n=>n===0?'hoy':n===1?'mañana':'en '+n+' días';
 function avisos(){
   const a=[];
-  S.tarjetas.forEach(t=>{ const d=diasHasta(t.corte); if(t.usado>0&&d<=7) a.push(`${t.nombre} corta ${dLbl(d)}`); if(pct(t)>=80) a.push(`${t.nombre} al ${nf(pct(t),0)}% del límite`); });
+  S.tarjetas.forEach(t=>{ const d=diasHasta(t.corte); if(t.usado>0&&d<=7) a.push(`${t.nombre} corta ${dLbl(d)}`); });
   S.prestamos.forEach(p=>{ if(p.dia){ const d=diasHasta(p.dia); if(d<=5) a.push(`Cuota de ${p.nombre} ${dLbl(d)}`); } });
   return a;
 }
@@ -539,19 +540,12 @@ function vInicio(){
   const top=Object.entries(cats).sort((a,b)=>b[1]-a[1]).slice(0,6);
   const mes=d.toLocaleDateString('es-DO',{month:'long'});
   const delta=prev?Math.round((tot-prev)/prev*100):null;
-  const av=avisos(), rec=allMovs().slice(0,5), deuda=S.prestamos.reduce((s,x)=>s+x.balance,0);
+  const av=avisos();
   return `
   <section class="hero">
     <div class="hero-top"><div><p class="hero-lbl">Tu dinero disponible</p></div>
       <button class="eye" data-act="ojo" aria-label="Mostrar u ocultar saldos">${svg(S.config.ocultar?'eyeoff':'eye')}</button></div>
     <div class="hero-bal"><span class="cur">RD$</span><span class="val num">${hide(nf(total))}</span></div>
-    <div class="accts">
-      <div><p class="k">Ahorros ••${esc(S.ahorro.numero)}</p><p class="v num">${hide(nf(S.ahorro.saldo))}</p></div>
-    </div>
-    <div class="hero-acts">
-      <button data-op="ingreso">${svg('in')}Agregar</button><button data-op="transfer">${svg('send')}Enviar</button>
-      <button data-op="compra">${svg('cart')}Compra</button><button data-op="pagotc">${svg('card')}Pagar</button>
-    </div>
   </section>
   ${av.length?`<div class="chips">${av.map(x=>`<span><i></i>${esc(x)}</span>`).join('')}</div>`:''}
   <section class="sec">
@@ -569,23 +563,18 @@ function vInicio(){
     <div class="card">${S.tarjetas.map(t=>`<button class="row" data-card="${t.id}"><div class="av">${svg('card')}</div>
       <div class="mid"><p class="t">${esc(t.nombre)}</p><p class="s">Corte ${dLbl(diasHasta(t.corte))} · ${nf(pct(t),0)}% usado</p>
       <div class="mini"><i style="width:${pct(t)}%;${pct(t)>=80?'background:var(--neg)':''}"></i></div></div>
-      <span class="amt num">RD$ ${hide(nf(t.usado,0))}</span></button>`).join('')}</div>
-  </section>
-  <section class="sec">
-    <div class="sec-h"><h2>Préstamos</h2><button data-act="ir:prestamos">${S.prestamos.length?'Ver todos':'Agregar'}</button></div>
-    <div class="card">${S.prestamos.length?S.prestamos.map(x=>`<button class="row" data-loan="${x.id}"><div class="av">${svg('bank')}</div>
-      <div class="mid"><p class="t">${esc(x.nombre)}</p><p class="s">${x.cuotasPagadas} de ${x.cuotasTotal} cuotas</p>
-      <div class="mini"><i style="width:${x.cuotasTotal?x.cuotasPagadas/x.cuotasTotal*100:0}%"></i></div></div>
-      <span class="amt num">RD$ ${hide(nf(x.balance,0))}</span></button>`).join('')
-      :`<div class="empty"><p>Sin préstamos registrados.</p></div>`}</div>
-    ${S.prestamos.length>1?`<p class="delta" style="text-align:center;margin-top:10px">Debes en total RD$ ${hide(nf(deuda,0))}</p>`:''}
-  </section>
-  <section class="sec">
-    <div class="sec-h"><h2>Últimos movimientos</h2>${rec.length?'<button data-act="ir:movs">Ver todo</button>':''}</div>
-    ${rec.length?`<div class="card">${rec.map(movRow).join('')}</div>`
-      :`<div class="card"><div class="empty"><p>Todavía no hay movimientos.<br>Agrega dinero o registra una compra para empezar.</p></div></div>`}
+      <span class="amt"><span class="u num">RD$ ${hide(nf(t.usado,0))}</span><small class="dsp"><span>Disponible</span> <span class="num">RD$ ${hide(nf(disp(t),0))}</span></small>${t.tipo==='doble'?`<span class="u num">US$ ${hide(nf(t.usadoUSD))}</span><small class="dsp"><span>Disponible</span> <span class="num">US$ ${hide(nf(dispUSD(t)))}</span></small>`:''}</span></button>`).join('')}</div>
   </section>
   ${syncHTML()}`;
+}
+
+function vOps(){
+  const L=[['ingreso','in'],['transfer','send'],['compra','cart'],['pagotc','card']];
+  return `<section class="sec" style="margin-top:4px">
+    <div class="sec-h"><h2>Transacciones</h2></div>
+    <div class="card">${L.map(([k,ic])=>`<button class="row" data-op="${k}"><div class="av">${svg(ic)}</div>
+      <div class="mid"><p class="t">${OPS[k].t}</p><p class="s">${OPS[k].s}</p></div>${svg('chev','chev')}</button>`).join('')}</div>
+    ${syncHTML()}</section>`;
 }
 
 function vPrestamos(){
@@ -944,8 +933,8 @@ function sheetEditar(){
         ${n('Balance usado (RD$)','t'+i+'_usado',t.usado)}
         ${t.tipo==='doble'?n('Límite (US$)','t'+i+'_limiteUSD',t.limiteUSD,'10')+n('Balance usado (US$)','t'+i+'_usadoUSD',t.usadoUSD):''}
         ${n('Pago mínimo (RD$)','t'+i+'_pagoMinimo',t.pagoMinimo)}
-        ${n('Día de corte','t'+i+'_corte',t.corte,'1')}`).join('')}
-        ${n('Día de pago (opcional)','t'+i+'_diaPago',t.diaPago||'','1')}
+        ${n('Día de corte','t'+i+'_corte',t.corte,'1')}
+        ${n('Día de pago (opcional)','t'+i+'_diaPago',t.diaPago||'','1')}`).join('')}
       ${S.prestamos.map((p,i)=>`
         <p class="daylbl">Préstamo ${i+1}</p>
         <div class="field"><label>Nombre</label><input type="text" name="p${i}_nombre" value="${esc(p.nombre)}"></div>
